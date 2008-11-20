@@ -1,0 +1,26 @@
+FixieWhiteLister
+=========
+
+The bulk of this code is stolen from the great white_list_helper plugin.
+
+Installing this plugin will automatically remove all the naughty things people type into your forms.  
+Those naughty things (javascript, etc) will never make it to your database, so there is no need to strip
+them out from your views later.
+
+To avoid this behavior for one action, use:
+
+  skip_before_filter :strip_naughty_stuff_from_form
+
+You can add or remove tags/attributes to the white list if you want to customize it a bit.
+
+Add table tags
+  
+  WhiteListHelper.tags.merge %w(table td th)
+
+Remove tags
+  
+  WhiteListHelper.tags.delete 'div'
+
+Change allowed attributes
+
+  WhiteListHelper.attributes.merge %w(id class style)
