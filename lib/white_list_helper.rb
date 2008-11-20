@@ -89,6 +89,21 @@ module WhiteListHelper
     def contains_bad_protocols?(value)
       WhiteListHelper.contains_bad_protocols?(white_listed_protocols, value)
     end
+
+    def strip_naughty_stuff_from_form
+      strip_naughty_stuff_from_hash(params)
+    end
+
+    def strip_naughty_stuff_from_hash hsh
+      return unless hsh.respond_to?(:each_pair)
+      hsh.each_pair do |key, value|
+        if value.class == String
+          hsh[key] = white_list(value)
+        elsif value.respond_to?(:[])
+          strip_naughty_stuff_from_hash(value)
+        end
+      end
+    end
 end
 
 WhiteListHelper.bad_tags   = %w(script)
