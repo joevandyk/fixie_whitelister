@@ -1,8 +1,8 @@
 module WhiteListHelper
   def self.included klass
     klass.class_eval do
-     include InstanceMethods
-     extend  ClassMethods
+      include InstanceMethods
+      extend  ClassMethods
     end
   end
 
@@ -14,19 +14,22 @@ module WhiteListHelper
 
   module InstanceMethods 
     def strip_naughty_stuff_from_form
-      strip_naughty_stuff_from_hash(params)
+      strip_naughty_stuff(params)
     end
 
-    def strip_naughty_stuff_from_hash hsh
-      return unless hsh.respond_to?(:each_pair)
-      hsh.each_pair do |key, value|
-        if value.class == String
-          hsh[key] = self.class.sanitizer.sanitize(value)
-        elsif value.respond_to?(:[])
-          strip_naughty_stuff_from_hash(value)
+    def strip_naughty_stuff input
+      case input
+      when Hash
+        input.each_pair do |key, value|
+          input[key] = strip_naughty_stuff(value)
         end
+      when String
+        self.class.sanitizer.sanitize(input)
+      when Array
+        input.map { |i| strip_naughty_stuff(i) }
+      else
+        raise "WHAT ARE YOU? '#{input.inspect}'"
       end
     end
   end
 end
-
